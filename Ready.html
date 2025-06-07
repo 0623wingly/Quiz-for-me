@@ -48,7 +48,7 @@
   <div class="type-info" id="typeInfo">タイプ：読み込み中...</div>
   <div class="question-count" id="questionCountDisplay">読み込み中...</div>
   <button onclick="startQuiz()">スタート</button>
-  <a class="back-link" href="HomePage.html">←選びなおす</a>
+  <a class="back-link" href="index.html">←選びなおす</a>
 
   <script>
     function getQueryParam(param) {
@@ -72,9 +72,9 @@
         }
       }
 
-      let query = `mode=${mode}&count=${count}`;
+      let query = `mode=${mode || ''}&count=${count || ''}`;
       if (mode === 'select') {
-        query += `&category=${encodeURIComponent(category)}&subcategory=${encodeURIComponent(subcategory)}`;
+        query += `&category=${encodeURIComponent(category || '')}&subcategory=${encodeURIComponent(subcategory || '')}`;
       }
       if (quizType) {
         query += `&quizType=${quizType}`;
@@ -96,14 +96,12 @@
       const subcategory = getQueryParam('subcategory');
       const count = getQueryParam('count');
 
-      if (mode === 'random') {
-        document.getElementById('typeInfo').textContent = 'タイプ：ランダム';
-      } else {
-        const subcatText = subcategory ? `；${subcategory}` : '';
-        document.getElementById('typeInfo').textContent = `タイプ：指定（${category}${subcatText}）`;
-      }
+      const modeText = mode === 'random' ? 'ランダム' : (mode === 'select' ? '指定' : '未選択');
+      const catText = category || '未選択';
+      const subcatText = subcategory ? `；${subcategory}` : '';
 
-      document.getElementById('questionCountDisplay').textContent = `${count}問`; 
+      document.getElementById('typeInfo').textContent = `タイプ：${modeText}（${catText}${subcatText}）`;
+      document.getElementById('questionCountDisplay').textContent = count ? `${count}問` : '未設定';
     }
   </script>
 </body>
