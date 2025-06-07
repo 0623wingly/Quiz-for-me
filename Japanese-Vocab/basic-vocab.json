@@ -1,0 +1,32 @@
+[
+  {
+    "id": "jp-vocab-0001",
+    "question": "ひらがなの最初の文字は？",
+    "correct": "あ",
+    "source": "基礎日本語語彙集"
+  },
+{
+  "id": "jp-vocab-0002",
+  "question": "カタカナの最初の文字は？",
+  "correct": "ア",
+  "source": "基礎日本語語彙集"
+},
+{
+  "id": "jp-vocab-0003",
+  "question": "日本語で「ありがとう」は何を意味しますか？",
+  "correct": "感謝",
+  "source": "基礎日本語語彙集"
+},
+  {
+    "id": "jp-vocab-0004",
+    "question": "「さようなら」の意味は？",
+    "correct": "別れの挨拶",
+    "source": "基礎日本語語彙集"
+  },
+  {
+    "id": "jp-vocab-0005",
+    "question": "「おはよう」の意味は？",
+    "correct": "朝の挨拶",
+    "source": "基礎日本語語彙集"
+  }
+]
