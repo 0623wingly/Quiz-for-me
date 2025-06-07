@@ -7,102 +7,67 @@
   <style>
     body {
       font-family: sans-serif;
-      background-color: #fff;
-      color: #333;
-      padding: 1em;
-      max-width: 480px;
-      margin: auto;
-      text-align: center;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
     }
     h1 {
-      font-size: 3em;
-      margin-bottom: 1.5em;
+      margin-bottom: 1em;
     }
-    .type-info {
-      font-size: 1.6em;
-      margin-bottom: 2em;
-    }
-    .question-count {
-      font-size: 2.2em;
-      margin-bottom: 3em;
+    .info {
+      font-size: 1.2em;
+      margin: 0.5em 0;
     }
     button {
-      background-color: #4CAF50;
+      margin-top: 2em;
+      padding: 0.8em 2em;
+      font-size: 1.2em;
+      background-color: #2196F3;
       color: white;
       border: none;
-      padding: 1em 2em;
-      font-size: 1.4em;
       cursor: pointer;
-    }
-    .back-link {
-      display: block;
-      margin-top: 2em;
-      color: #333;
-      text-decoration: none;
-      font-size: 1em;
     }
   </style>
 </head>
 <body>
-  <h1>問題</h1>
-  <div class="type-info" id="typeInfo">タイプ：読み込み中...</div>
-  <div class="question-count" id="questionCountDisplay">読み込み中...</div>
-  <button onclick="startQuiz()">スタート</button>
-  <a class="back-link" href="index.html">←選びなおす</a>
+  <h1>クイズ準備開始</h1>
+  <div class="info" id="quiz-type"></div>
+  <div class="info" id="question-count"></div>
+  <div class="info" id="category"></div>
+  <div class="info" id="subcategory"></div>
+  <button id="start-button">スタート</button>
 
   <script>
-    function getQueryParam(param) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(param);
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode');
+    const count = parseInt(urlParams.get('count'));
+    const category = urlParams.get('category');
+    const subcategory = urlParams.get('subcategory');
+
+    document.getElementById('question-count').textContent = `問題数: ${count}`;
+    document.getElementById('category').textContent = category ? `カテゴリ: ${category}` : '';
+    document.getElementById('subcategory').textContent = subcategory ? `サブカテゴリ: ${subcategory}` : '';
+
+    // quizType判定ロジック
+    let quizType = '';
+    if (category === '日本語語彙') {
+      quizType = 'multiple-choice';
+    } else {
+      quizType = 'default'; // 未対応カテゴリなど
     }
 
-    function startQuiz() {
-      const mode = getQueryParam('mode');
-      const category = getQueryParam('category');
-      const subcategory = getQueryParam('subcategory');
-      const count = getQueryParam('count');
+    document.getElementById('quiz-type').textContent = `タイプ: ${quizType}`;
 
-      let quizType = '';
-      let quizData = '';
-
-      if (category === '日本語語彙') {
-        quizType = 'multiple-choice';
-        if (subcategory === '基礎単語') {
-          quizData = 'Japanese-Vocab/KisoTan-go.json';
-        }
-      }
-
-      let query = `mode=${mode || ''}&count=${count || ''}`;
-      if (mode === 'select') {
-        query += `&category=${encodeURIComponent(category || '')}&subcategory=${encodeURIComponent(subcategory || '')}`;
-      }
-      if (quizType) {
-        query += `&quizType=${quizType}`;
-      }
-      if (quizData) {
-        query += `&quizData=${encodeURIComponent(quizData)}`;
-      }
-
-      if (quizType) {
-        window.location.href = `QuizType/${quizType}.html?${query}`;
-      } else {
-        alert('未対応のカテゴリです。');
-      }
-    }
-
-    window.onload = function() {
-      const mode = getQueryParam('mode');
-      const category = getQueryParam('category');
-      const subcategory = getQueryParam('subcategory');
-      const count = getQueryParam('count');
-
-      const modeText = mode === 'random' ? 'ランダム' : (mode === 'select' ? '指定' : '未選択');
-      const catText = category || '未選択';
-      const subcatText = subcategory ? `；${subcategory}` : '';
-
-      document.getElementById('typeInfo').textContent = `タイプ：${modeText}（${catText}${subcatText}）`;
-      document.getElementById('questionCountDisplay').textContent = count ? `${count}問` : '未設定';
-    }
+    // スタートボタン押下時、Loading画面へ遷移
+    document.getElementById('start-button').addEventListener('click', () => {
+      const loadingURL = `Loading.html?quizType=${encodeURIComponent(quizType)}&count=${count}&category=${encodeURIComponent(category)}&subcategory=${encodeURIComponent(subcategory)}`;
+      window.location.href = loadingURL;
+    });
   </script>
 </body>
 </html>
