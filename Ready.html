@@ -18,12 +18,13 @@
     }
     h1 {
       margin-bottom: 1em;
+      font-size: 2em;
     }
     .info {
       font-size: 1.2em;
       margin: 0.5em 0;
     }
-    button {
+    #start-button {
       margin-top: 2em;
       padding: 0.8em 2em;
       font-size: 1.2em;
@@ -32,40 +33,51 @@
       border: none;
       cursor: pointer;
     }
+    #back-link {
+      margin-top: 1em;
+      color: #2196F3;
+      cursor: pointer;
+      text-decoration: underline;
+      font-size: 1em;
+    }
   </style>
 </head>
 <body>
   <h1>クイズ準備開始</h1>
   <div class="info" id="quiz-type"></div>
   <div class="info" id="question-count"></div>
-  <div class="info" id="category"></div>
-  <div class="info" id="subcategory"></div>
   <button id="start-button">スタート</button>
+  <div id="back-link" onclick="window.location.href='index.html'">←選びなおす</div>
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
-    const count = parseInt(urlParams.get('count'));
+    const count = parseInt(urlParams.get('count')) || 0;
     const category = urlParams.get('category');
     const subcategory = urlParams.get('subcategory');
 
-    document.getElementById('question-count').textContent = `問題数: ${count}`;
-    document.getElementById('category').textContent = category ? `カテゴリ: ${category}` : '';
-    document.getElementById('subcategory').textContent = subcategory ? `サブカテゴリ: ${subcategory}` : '';
-
-    // quizType判定ロジック
-    let quizType = '';
-    if (category === '日本語語彙') {
-      quizType = 'multiple-choice';
-    } else {
-      quizType = 'default'; // 未対応カテゴリなど
+    // タイプの表示
+    const quizTypeEl = document.getElementById('quiz-type');
+    if (mode === 'random') {
+      quizTypeEl.textContent = `タイプ：ランダム`;
+    } else if (mode === 'select') {
+      const cat = category || '未選択';
+      const sub = subcategory || '全て';
+      quizTypeEl.textContent = `タイプ：${cat}；${sub}`;
     }
 
-    document.getElementById('quiz-type').textContent = `タイプ: ${quizType}`;
+    // 問題数の表示
+    const countEl = document.getElementById('question-count');
+    if (count > 0) {
+      countEl.textContent = `問題数：${count}`;
+    } else {
+      countEl.textContent = '';
+    }
 
     // スタートボタン押下時、Loading画面へ遷移
     document.getElementById('start-button').addEventListener('click', () => {
-      const loadingURL = `Loading.html?quizType=${encodeURIComponent(quizType)}&count=${count}&category=${encodeURIComponent(category)}&subcategory=${encodeURIComponent(subcategory)}`;
+      const quizType = category === '日本語語彙' ? 'multiple-choice' : 'default';
+      const loadingURL = `Loading.html?quizType=${encodeURIComponent(quizType)}&count=${count}&category=${encodeURIComponent(category || '')}&subcategory=${encodeURIComponent(subcategory || '')}`;
       window.location.href = loadingURL;
     });
   </script>
