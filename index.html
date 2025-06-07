@@ -138,10 +138,10 @@
   function goToReady() {
     const count = document.getElementById("questionCount").value;
     const mode = document.getElementById("mode").value;
-    const category = document.getElementById("category").value;
-    const subcategory = document.getElementById("subcategory").value;
+    const category = document.getElementById("category").value || '';
+    const subcategory = document.getElementById("subcategory").value || '';
 
-    if (mode === "select" && (!category || category === "")) {
+    if (mode === "select" && !category) {
       alert("カテゴリが選択されていません");
       return;
     }
@@ -152,7 +152,7 @@
     }
 
     window.location.href = `Ready.html?${query}`;
-  };
+  }
   </script>
 </body>
 </html>
