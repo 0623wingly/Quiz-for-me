@@ -135,19 +135,24 @@
       });
     });
 
-      function goToReady() {
-      const count = document.getElementById("questionCount").value;
-      const mode = document.getElementById("mode").value;
-      const category = document.getElementById("category").value || '';
-      const subcategory = document.getElementById("subcategory").value || '';
+  function goToReady() {
+    const count = document.getElementById("questionCount").value;
+    const mode = document.getElementById("mode").value;
+    const category = document.getElementById("category").value;
+    const subcategory = document.getElementById("subcategory").value;
 
-      let query = `mode=${encodeURIComponent(mode)}&count=${encodeURIComponent(count)}`;
-      if (mode === "select") {
-        query += `&category=${encodeURIComponent(category)}&subcategory=${encodeURIComponent(subcategory)}`;
-      }
+    if (mode === "select" && (!category || category === "")) {
+      alert("カテゴリが選択されていません");
+      return;
+    }
 
-      window.location.href = `Ready.html?${query}`;
-    };
+    let query = `mode=${encodeURIComponent(mode)}&count=${encodeURIComponent(count)}`;
+    if (mode === "select") {
+      query += `&category=${encodeURIComponent(category)}&subcategory=${encodeURIComponent(subcategory)}`;
+    }
+
+    window.location.href = `Ready.html?${query}`;
+  };
   </script>
 </body>
 </html>
