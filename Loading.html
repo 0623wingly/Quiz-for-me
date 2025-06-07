@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>読み込み中...</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      flex-direction: column;
+    }
+    h1 {
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <h1>クイズ準備中...</h1>
+  <script>
+    async function loadQuizData() {
+      const params = new URLSearchParams(window.location.search);
+      const quizType = params.get('quizType');
+      const count = parseInt(params.get('count')) || 10;
+      const category = params.get('category');
+      const subcategory = params.get('subcategory');
+
+      // 例：日本語語彙 → basic-vocab.json
+      const dataPath = `QuizData/${category}/${subcategory === '' || subcategory === '全て' ? 'basic-vocab.json' : 'basic-vocab.json'}`;
+
+      const res = await fetch(dataPath);
+      const allQuestions = await res.json();
+
+      // 選択対象の問題をランダムに抽出
+      const selected = allQuestions.sort(() => Math.random() - 0.5).slice(0, count);
+
+      const questionTable = selected.map((item, index) => {
+        const otherChoices = allQuestions.filter(q => q.id !== item.id).map(q => q.correct);
+        const wrong = otherChoices.sort(() => Math.random() - 0.5).slice(0, 3);
+        const options = [...wrong, item.correct].sort(() => Math.random() - 0.5);
+
+        return {
+          number: index + 1,
+          id: item.id,
+          question: item.question,
+          options: options,
+          correct: item.correct,
+          selected: null,
+          isCorrect: null,
+          time: null,
+          source: item.source || ''
+        };
+      });
+
+      localStorage.setItem('quizData', JSON.stringify(questionTable));
+      window.location.href = 'multiple-choice.html';
+    }
+
+    loadQuizData();
+  </script>
+</body>
+</html>
