@@ -12,6 +12,9 @@
       padding: 1em;
       max-width: 480px;
       margin: auto;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
     h1 {
       text-align: center;
@@ -35,10 +38,20 @@
       border: none;
       cursor: pointer;
     }
+    footer {
+      margin-top: auto;
+      font-size: 0.9em;
+      color: #888;
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid #ccc;
+      padding-top: 1em;
+    }
   </style>
 </head>
 <body>
   <h1>問題集</h1>
+
   <div class="field">
     <label for="questionCount">問題数：</label>
     <select id="questionCount">
@@ -50,109 +63,28 @@
   </div>
 
   <div class="field">
-    <label for="mode">カテゴリ選択モード：</label>
-    <select id="mode" onchange="toggleCategoryDisplay()">
-      <option value="random">ランダム</option>
-      <option value="select">指定</option>
-    </select>
-  </div>
-
-  <div class="field" id="category-group" style="display: none;">
-    <label for="category">カテゴリ：</label>
-    <select id="category">
-      <option value="">カテゴリを選択</option>
-      <option value="日本語語彙">日本語語彙</option>
-      <option value="漢字(日本語)">漢字(日本語)</option>
-      <option value="数学">数学</option>
-      <option value="理科">理科</option>
-      <option value="社会">社会</option>
-      <option value="情報">情報</option>
-      <option value="英語">英語</option>
-      <option value="中国語">中国語</option>
-      <option value="ポケモン">ポケモン</option>
-      <option value="ゲームキャラクター">ゲームキャラクター</option>
-      <option value="図鑑">図鑑</option>
-      <option value="文化人類学">文化人類学</option>
-      <option value="文化・社会">文化・社会</option>
-      <option value="国際関係">国際関係</option>
-      <option value="心理学">心理学</option>
-    </select>
-  </div>
-
-  <div class="field" id="subcategory-group" style="display: none;">
-    <label for="subcategory">サブカテゴリ：</label>
-    <select id="subcategory">
-      <option value="">全て</option>
+    <label for="mode">出題形式：</label>
+    <select id="mode" disabled>
+      <option value="multiple-choice">4択</option>
     </select>
   </div>
 
   <button onclick="goToReady()">スタート</button>
 
-  <script>
-    const categorySubcategoryMap = {
-      "日本語語彙": ["基礎単語", "四字熟語", "慣用句・ことわざ", "古文", "難読語彙"],
-      "漢字(日本語)": ["1〜3級相当", "2級相当", "1級相当", "難読漢字(国・地名)", "難読漢字(動物A)", "難読漢字(動物B)", "難読漢字(植物)", "難読漢字(その他)"],
-      "数学": ["算数", "数ⅠA", "数ⅡB", "和算", "その他"],
-      "理科": ["物理", "化学", "生物", "地学"],
-      "社会": ["地理", "世界史", "日本史", "公民(公共・倫理)", "公民(政治・経済)", "年号ヒストリー"],
-      "情報": [],
-      "英語": ["語彙", "文法・表現"],
-      "中国語": ["漢字(中国語繁体字)", "語彙(基本)", "語彙(四字熟語)", "文法・表現"],
-      "ポケモン": ["基礎情報", "特性・技", "アイテム", "種族値", "キャラクター", "マップ"],
-      "ゲームキャラクター": ["マリオ", "カービィ", "リズム天国", "どうぶつの森"],
-      "図鑑": ["岩石・鉱物・化石", "星・星座", "生物(動物)", "生物(鳥)", "生物(両生・爬虫類)", "生物(水棲)", "生物(魚)", "生物(虫)", "植物A", "植物B", "古生物・恐竜"],
-      "文化人類学": ["地域文化論", "現代文化論", "民族文化論"],
-      "文化・社会": ["日本", "中国"],
-      "国際関係": [],
-      "心理学": ["臨床心理学", "発達心理学", "犯罪心理学"]
-    };
+  <footer>
+    <div>© 2025 wingly-Icoration</div>
+    <div>Ver 1.0</div>
+  </footer>
 
-    function toggleCategoryDisplay() {
-      const mode = document.getElementById("mode").value;
-      const catGroup = document.getElementById("category-group");
-      const subcatGroup = document.getElementById("subcategory-group");
-      const show = mode === "select";
-      catGroup.style.display = show ? "block" : "none";
-      subcatGroup.style.display = show ? "block" : "none";
-    }
-
-    document.getElementById("category").addEventListener("change", () => {
-      const category = document.getElementById("category").value;
-      const subcategorySelect = document.getElementById("subcategory");
-      const subcategories = categorySubcategoryMap[category] || [];
-      subcategorySelect.innerHTML = "";
-
-      const defaultOption = document.createElement("option");
-      defaultOption.value = "";
-      defaultOption.textContent = "全て";
-      subcategorySelect.appendChild(defaultOption);
-
-      subcategories.forEach(sub => {
-        const option = document.createElement("option");
-        option.value = sub;
-        option.textContent = sub;
-        subcategorySelect.appendChild(option);
-      });
-    });
-
+<script>
   function goToReady() {
     const count = document.getElementById("questionCount").value;
-    const mode = document.getElementById("mode").value;
-    const category = document.getElementById("category").value || '';
-    const subcategory = document.getElementById("subcategory").value || '';
+    const quizType = "multiple-choice"; // 今後拡張も可能
 
-    if (mode === "select" && !category) {
-      alert("カテゴリが選択されていません");
-      return;
-    }
-
-    let query = `mode=${encodeURIComponent(mode)}&count=${encodeURIComponent(count)}`;
-    if (mode === "select") {
-      query += `&category=${encodeURIComponent(category)}&subcategory=${encodeURIComponent(subcategory)}`;
-    }
-
-    window.location.href = `Ready.html?${query}`;
+    const query = `quizType=${encodeURIComponent(quizType)}&count=${encodeURIComponent(count)}`;
+    window.location.href = `Loading.html?${query}`;
   }
-  </script>
+</script>
+
 </body>
 </html>
